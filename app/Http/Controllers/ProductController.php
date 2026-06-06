@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Cart;
 
@@ -11,14 +12,23 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        $cartCount = Cart::sum('quantity');
+
+        if (Auth::check()) {
+            $cartCount = Cart::where('user_id', Auth::id())->sum('quantity');
+        } else {
+            $cartCount = 0;
+        }
 
         return view('welcome', compact('products', 'cartCount'));
     }
 
     public function cart()
     {
-        $cartItems = Cart::all();
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        $cartItems = Cart::where('user_id', Auth::id())->get();
 
         $totalPrice = 0;
 
@@ -66,12 +76,19 @@ class ProductController extends Controller
 
     public function addToCart(Product $product)
     {
-        $cartItem = Cart::where('product_id', $product->id)->first();
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        $cartItem = Cart::where('user_id', Auth::id())
+            ->where('product_id', $product->id)
+            ->first();
 
         if ($cartItem) {
             $cartItem->increment('quantity');
         } else {
             Cart::create([
+                'user_id' => Auth::id(),
                 'product_id' => $product->id,
                 'quantity' => 1,
             ]);
@@ -82,6 +99,10 @@ class ProductController extends Controller
 
     public function removeFromCart(Cart $cart)
     {
+        if (!Auth::check() || $cart->user_id !== Auth::id()) {
+            return redirect('/cart');
+        }
+
         if ($cart->quantity > 1) {
             $cart->decrement('quantity');
         } else {
