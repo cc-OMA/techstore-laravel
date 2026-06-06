@@ -11,7 +11,7 @@ use App\Models\Order;
 
 Route::get('/', [ProductController::class, 'index']);
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/products/create', [ProductController::class, 'create']);
     Route::post('/products', [ProductController::class, 'store']);
 
@@ -19,7 +19,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/products/{product}', [ProductController::class, 'update']);
 
     Route::delete('/products/{product}', [ProductController::class, 'destroy']);
+});
 
+Route::middleware('auth')->group(function () {
     Route::post('/order/place', [OrderController::class, 'placeOrder']);
     Route::get('/orders', [OrderController::class, 'index']);
 });

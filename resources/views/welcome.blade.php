@@ -49,9 +49,11 @@
             <a class="nav-link me-3" href="#">Contact</a>
 
             @auth
-                <a class="btn btn-success ms-3 me-2" href="/products/create">
-                    Add Product
-                </a>
+                @if(auth()->user()->isAdmin())
+                    <a class="btn btn-success ms-3 me-2" href="/products/create">
+                        Add Product
+                    </a>
+                @endif
             @endauth
 
             <a class="btn btn-outline-primary me-2" href="/cart">
@@ -209,9 +211,11 @@
                             </a>
 
                             @auth
-                                <a href="/products/{{ $product->id }}/edit" class="btn btn-warning mb-2">
-                                    Edit
-                                </a>
+                                @if(auth()->user()->isAdmin())
+                                    <a href="/products/{{ $product->id }}/edit" class="btn btn-warning mb-2">
+                                        Edit
+                                    </a>
+                                @endif
                             @endauth
 
                             <form method="POST" action="/cart/add/{{ $product->id }}" class="mb-2">
@@ -223,14 +227,16 @@
                             </form>
 
                             @auth
-                                <form method="POST" action="/products/{{ $product->id }}">
-                                    @csrf
-                                    @method('DELETE')
+                                @if(auth()->user()->isAdmin())
+                                    <form method="POST" action="/products/{{ $product->id }}">
+                                        @csrf
+                                        @method('DELETE')
 
-                                    <button type="submit" class="btn btn-danger w-100">
-                                        Delete
-                                    </button>
-                                </form>
+                                        <button type="submit" class="btn btn-danger w-100">
+                                            Delete
+                                        </button>
+                                    </form>
+                                @endif
                             @endauth
                         </div>
                     </div>
