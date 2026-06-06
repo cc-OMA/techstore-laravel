@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
 use App\Models\Cart;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
@@ -30,6 +32,21 @@ class ProductController extends Controller
         return view('welcome', compact('products', 'cartCount', 'search'));
     }
 
+    public function categoryProducts(Category $category)
+    {
+        $products = Product::where('category_id', $category->id)->get();
+
+        if (Auth::check()) {
+            $cartCount = Cart::where('user_id', Auth::id())->sum('quantity');
+        } else {
+            $cartCount = 0;
+        }
+
+        $search = null;
+
+        return view('welcome', compact('products', 'cartCount', 'search'));
+    }
+
     public function cart()
     {
         if (!Auth::check()) {
@@ -49,14 +66,25 @@ class ProductController extends Controller
 
     public function create()
     {
-        return view('products.create');
+        $categories = Category::all();
+
+        return view('products.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'category_id' => 'required',
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'image' => 'required|image',
+            'description' => 'required',
+        ]);
+
         $imagePath = $request->file('image')->store('products', 'public');
 
         Product::create([
+            'category_id' => $request->category_id,
             'name' => $request->name,
             'price' => $request->price,
             'image' => $imagePath,
@@ -68,14 +96,36 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        return view('products.edit', compact('product'));
+        $categories = Category::all();
+
+        return view('products.edit', compact('product', 'categories'));
     }
 
     public function update(Request $request, Product $product)
     {
+        $request->validate([
+            'category_id' => 'required',
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'image' => 'nullable|image',
+            'description' => 'required',
+        ]);
+
+        $imagePath = $product->image;
+
+        if ($request->hasFile('image')) {
+            if ($product->image && str_starts_with($product->image, 'products/')) {
+                Storage::disk('public')->delete($product->image);
+            }
+
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
+
         $product->update([
+            'category_id' => $request->category_id,
             'name' => $request->name,
             'price' => $request->price,
+            'image' => $imagePath,
             'description' => $request->description,
         ]);
 
@@ -122,6 +172,10 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        if ($product->image && str_starts_with($product->image, 'products/')) {
+            Storage::disk('public')->delete($product->image);
+        }
+
         $product->delete();
 
         return redirect('/');

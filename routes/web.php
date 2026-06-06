@@ -18,6 +18,8 @@ Route::post('/cart/add/{product}', [ProductController::class, 'addToCart']);
 Route::get('/cart', [ProductController::class, 'cart']);
 Route::delete('/cart/{cart}', [ProductController::class, 'removeFromCart']);
 
+Route::get('/category/{category}', [ProductController::class, 'categoryProducts']);
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
