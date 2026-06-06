@@ -9,9 +9,17 @@ use App\Models\Cart;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $search = $request->search;
+
+        if ($search) {
+            $products = Product::where('name', 'like', '%' . $search . '%')
+                ->orWhere('description', 'like', '%' . $search . '%')
+                ->get();
+        } else {
+            $products = Product::all();
+        }
 
         if (Auth::check()) {
             $cartCount = Cart::where('user_id', Auth::id())->sum('quantity');
@@ -19,7 +27,7 @@ class ProductController extends Controller
             $cartCount = 0;
         }
 
-        return view('welcome', compact('products', 'cartCount'));
+        return view('welcome', compact('products', 'cartCount', 'search'));
     }
 
     public function cart()

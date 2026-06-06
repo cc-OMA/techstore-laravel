@@ -19,12 +19,20 @@
         <a class="navbar-brand fw-bold text-primary fs-3" href="/">TechStore</a>
 
         <div class="d-flex align-items-center ms-auto">
-            <input
-                type="text"
-                class="form-control me-3"
-                placeholder="Search products..."
-                style="width: 250px;"
-            >
+            <form method="GET" action="/" class="d-flex me-3">
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search products..."
+                    value="{{ $search ?? '' }}"
+                    style="width: 250px;"
+                >
+
+                <button type="submit" class="btn btn-outline-primary ms-2">
+                    Search
+                </button>
+            </form>
 
             <a class="nav-link active me-3" href="/">Home</a>
             <a class="nav-link me-3" href="#">Products</a>
@@ -111,6 +119,13 @@
 <section class="py-5 bg-light">
     <div class="container">
         <h2 class="text-center fw-bold mb-5">Featured Products</h2>
+
+        @if(!empty($search))
+            <p>
+                Search results for: <strong>{{ $search }}</strong>
+            </p>
+        @endif
+
         <p>Product Count: {{ $products->count() }}</p>
 
         <div class="row g-4">
