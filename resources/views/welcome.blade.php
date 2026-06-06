@@ -48,17 +48,33 @@
             <a class="nav-link me-3" href="#categories">Categories</a>
             <a class="nav-link me-3" href="#">Contact</a>
 
-            <a class="btn btn-success ms-3 me-2" href="/products/create">
-                Add Product
-            </a>
+            @auth
+                <a class="btn btn-success ms-3 me-2" href="/products/create">
+                    Add Product
+                </a>
+            @endauth
 
             <a class="btn btn-outline-primary me-2" href="/cart">
                 Cart ({{ $cartCount }})
             </a>
 
-            <a class="btn btn-primary" href="/login">
-                Login
-            </a>
+            @auth
+                <a class="btn btn-outline-dark me-2" href="/dashboard">
+                    Dashboard
+                </a>
+
+                <form method="POST" action="/logout" class="d-inline">
+                    @csrf
+
+                    <button type="submit" class="btn btn-danger">
+                        Logout
+                    </button>
+                </form>
+            @else
+                <a class="btn btn-primary" href="/login">
+                    Login
+                </a>
+            @endauth
         </div>
     </div>
 </nav>
@@ -164,14 +180,20 @@
             @foreach($products as $product)
                 <div class="col-md-3">
                     <div class="card shadow-sm h-100 product-card">
-                        <img
-                            src="{{ str_starts_with($product->image, 'products/') ? asset('storage/' . $product->image) : (str_starts_with($product->image, 'http') ? $product->image : 'https://dummyimage.com/400x300/cccccc/000000&text=Product+Image') }}"
-                            class="card-img-top product-img"
-                            alt="{{ $product->name }}">
+                        <a href="/products/{{ $product->id }}">
+                            <img
+                                src="{{ str_starts_with($product->image, 'products/') ? asset('storage/' . $product->image) : (str_starts_with($product->image, 'http') ? $product->image : 'https://dummyimage.com/400x300/cccccc/000000&text=Product+Image') }}"
+                                class="card-img-top product-img"
+                                alt="{{ $product->name }}">
+                        </a>
 
                         <div class="card-body text-center d-flex flex-column">
                             <h5 class="card-title">
-                                {{ $product->name }}
+                                <a
+                                    href="/products/{{ $product->id }}"
+                                    class="text-decoration-none text-dark">
+                                    {{ $product->name }}
+                                </a>
                             </h5>
 
                             <p class="text-primary fw-bold fs-5">
@@ -182,9 +204,15 @@
                                 {{ $product->description }}
                             </p>
 
-                            <a href="/products/{{ $product->id }}/edit" class="btn btn-warning mb-2">
-                                Edit
+                            <a href="/products/{{ $product->id }}" class="btn btn-outline-primary mb-2">
+                                View Details
                             </a>
+
+                            @auth
+                                <a href="/products/{{ $product->id }}/edit" class="btn btn-warning mb-2">
+                                    Edit
+                                </a>
+                            @endauth
 
                             <form method="POST" action="/cart/add/{{ $product->id }}" class="mb-2">
                                 @csrf
@@ -194,14 +222,16 @@
                                 </button>
                             </form>
 
-                            <form method="POST" action="/products/{{ $product->id }}">
-                                @csrf
-                                @method('DELETE')
+                            @auth
+                                <form method="POST" action="/products/{{ $product->id }}">
+                                    @csrf
+                                    @method('DELETE')
 
-                                <button type="submit" class="btn btn-danger w-100">
-                                    Delete
-                                </button>
-                            </form>
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        Delete
+                                    </button>
+                                </form>
+                            @endauth
                         </div>
                     </div>
                 </div>

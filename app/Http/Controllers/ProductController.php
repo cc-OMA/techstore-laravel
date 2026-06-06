@@ -94,6 +94,17 @@ class ProductController extends Controller
         return redirect('/');
     }
 
+    public function show(Product $product)
+    {
+        if (Auth::check()) {
+            $cartCount = Cart::where('user_id', Auth::id())->sum('quantity');
+        } else {
+            $cartCount = 0;
+        }
+
+        return view('products.show', compact('product', 'cartCount'));
+    }
+
     public function edit(Product $product)
     {
         $categories = Category::all();
