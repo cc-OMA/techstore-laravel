@@ -67,6 +67,14 @@
                 <h3>
                     Total Price: ${{ number_format($totalPrice, 2) }}
                 </h3>
+
+                <form method="POST" action="/order/place" class="mt-3">
+                    @csrf
+
+                    <button type="submit" class="btn btn-success btn-lg">
+                        Place Order
+                    </button>
+                </form>
             </div>
         </div>
 

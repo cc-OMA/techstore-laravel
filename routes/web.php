@@ -3,6 +3,11 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Cart;
+use App\Models\Order;
 
 Route::get('/', [ProductController::class, 'index']);
 
@@ -14,6 +19,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/products/{product}', [ProductController::class, 'update']);
 
     Route::delete('/products/{product}', [ProductController::class, 'destroy']);
+
+    Route::post('/order/place', [OrderController::class, 'placeOrder']);
+    Route::get('/orders', [OrderController::class, 'index']);
 });
 
 Route::get('/products/{product}', [ProductController::class, 'show']);
@@ -25,7 +33,17 @@ Route::delete('/cart/{cart}', [ProductController::class, 'removeFromCart']);
 Route::get('/category/{category}', [ProductController::class, 'categoryProducts']);
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $productCount = Product::count();
+    $categoryCount = Category::count();
+    $cartItemCount = Cart::sum('quantity');
+    $orderCount = Order::count();
+
+    return view('dashboard', compact(
+        'productCount',
+        'categoryCount',
+        'cartItemCount',
+        'orderCount'
+    ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
