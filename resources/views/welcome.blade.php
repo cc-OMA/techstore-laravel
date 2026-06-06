@@ -6,40 +6,39 @@
     <title>TechStore</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-    .product-img {
-        height: 220px;
-        object-fit: cover;
-    }
-</style>
+        .product-img {
+            height: 220px;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg bg-white shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold text-primary fs-3" href="#">TechStore</a>
-<div class="d-flex align-items-center ms-auto">
+        <a class="navbar-brand fw-bold text-primary fs-3" href="/">TechStore</a>
 
-    <input
-        type="text"
-        class="form-control me-3"
-        placeholder="Search products..."
-        style="width: 250px;"
-    >
+        <div class="d-flex align-items-center ms-auto">
+            <input
+                type="text"
+                class="form-control me-3"
+                placeholder="Search products..."
+                style="width: 250px;"
+            >
 
-    <a class="nav-link active me-3" href="#">Home</a>
-<a class="nav-link me-3" href="#">Products</a>
-<a class="nav-link me-3" href="#">Categories</a>
-<a class="nav-link me-3" href="#">Contact</a>
+            <a class="nav-link active me-3" href="/">Home</a>
+            <a class="nav-link me-3" href="#">Products</a>
+            <a class="nav-link me-3" href="#">Categories</a>
+            <a class="nav-link me-3" href="#">Contact</a>
 
-    <a class="btn btn-outline-primary ms-3 me-2" href="#">
-        Cart (0)
-    </a>
+            <a class="btn btn-outline-primary ms-3 me-2" href="/cart">
+                Cart ({{ $cartCount }})
+            </a>
 
-    <a class="btn btn-primary" href="/login">
-    Login
-</a>
-
-</div>
+            <a class="btn btn-primary" href="/login">
+                Login
+            </a>
+        </div>
     </div>
 </nav>
 
@@ -108,13 +107,13 @@
         </div>
     </div>
 </section>
+
 <section class="py-5 bg-light">
     <div class="container">
         <h2 class="text-center fw-bold mb-5">Featured Products</h2>
         <p>Product Count: {{ $products->count() }}</p>
 
         <div class="row g-4">
-
             @foreach($products as $product)
                 <div class="col-md-3">
                     <div class="card shadow-sm h-100">
@@ -132,27 +131,35 @@
                             <p class="card-text">
                                 {{ $product->description }}
                             </p>
+
                             <a href="/products/{{ $product->id }}/edit" class="btn btn-warning mb-2">
-    Edit
-</a>
-                            <button class="btn btn-primary">Add to Cart</button>
+                                Edit
+                            </a>
 
-<form method="POST" action="/products/{{ $product->id }}" class="mt-2">
-    @csrf
-    @method('DELETE')
+                            <form method="POST" action="/cart/add/{{ $product->id }}" class="mb-2">
+                                @csrf
 
-    <button type="submit" class="btn btn-danger">
-        Delete
-    </button>
-</form>
+                                <button type="submit" class="btn btn-primary">
+                                    Add to Cart
+                                </button>
+                            </form>
+
+                            <form method="POST" action="/products/{{ $product->id }}">
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="submit" class="btn btn-danger">
+                                    Delete
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
             @endforeach
-
         </div>
     </div>
 </section>
+
 <footer class="bg-dark text-white text-center py-4">
     <div class="container">
         <h5 class="fw-bold">TechStore</h5>
@@ -160,5 +167,6 @@
         <p class="mb-0">© 2026 TechStore. All rights reserved.</p>
     </div>
 </footer>
+
 </body>
 </html>

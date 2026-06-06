@@ -14,6 +14,10 @@ Route::put('/products/{product}', [ProductController::class, 'update']);
 
 Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 
+Route::post('/cart/add/{product}', [ProductController::class, 'addToCart']);
+Route::get('/cart', [ProductController::class, 'cart']);
+Route::delete('/cart/{cart}', [ProductController::class, 'removeFromCart']);
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
