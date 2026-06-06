@@ -7,7 +7,7 @@
 
     <h1>Add Product</h1>
 
-    <form method="POST" action="/products">
+    <form method="POST" action="/products" enctype="multipart/form-data">
         @csrf
 
         <label>Product Name</label>
@@ -22,7 +22,7 @@
 
         <label>Image</label>
         <br>
-        <input type="text" name="image">
+        <input type="file" name="image">
         <br><br>
 
         <label>Description</label>

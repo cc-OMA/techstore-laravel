@@ -118,7 +118,7 @@
             @foreach($products as $product)
                 <div class="col-md-3">
                     <div class="card shadow-sm h-100">
-                        <img src="{{ str_starts_with($product->image, 'http') ? $product->image : 'https://dummyimage.com/400x300/cccccc/000000&text=Product+Image' }}"
+                        <img src="{{ str_starts_with($product->image, 'products/') ? asset('storage/' . $product->image) : (str_starts_with($product->image, 'http') ? $product->image : 'https://dummyimage.com/400x300/cccccc/000000&text=Product+Image') }}"
                              class="card-img-top product-img"
                              alt="{{ $product->name }}">
 
@@ -132,8 +132,19 @@
                             <p class="card-text">
                                 {{ $product->description }}
                             </p>
-
+                            <a href="/products/{{ $product->id }}/edit" class="btn btn-warning mb-2">
+    Edit
+</a>
                             <button class="btn btn-primary">Add to Cart</button>
+
+<form method="POST" action="/products/{{ $product->id }}" class="mt-2">
+    @csrf
+    @method('DELETE')
+
+    <button type="submit" class="btn btn-danger">
+        Delete
+    </button>
+</form>
                         </div>
                     </div>
                 </div>
