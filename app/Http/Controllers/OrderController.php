@@ -18,6 +18,24 @@ class OrderController extends Controller
         return view('orders.index', compact('orders'));
     }
 
+    public function adminIndex()
+    {
+        $orders = Order::with('user')
+            ->latest()
+            ->get();
+
+        return view('orders.admin', compact('orders'));
+    }
+
+    public function updateStatus(Request $request, Order $order)
+    {
+        $order->update([
+            'status' => $request->status,
+        ]);
+
+        return redirect('/admin/orders');
+    }
+
     public function placeOrder()
     {
         $cartItems = Cart::where('user_id', Auth::id())->get();
@@ -35,6 +53,7 @@ class OrderController extends Controller
         Order::create([
             'user_id' => Auth::id(),
             'total_price' => $totalPrice,
+            'status' => 'pending',
         ]);
 
         Cart::where('user_id', Auth::id())->delete();

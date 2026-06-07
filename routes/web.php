@@ -19,6 +19,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/products/{product}', [ProductController::class, 'update']);
 
     Route::delete('/products/{product}', [ProductController::class, 'destroy']);
+
+    Route::get('/admin/orders', [OrderController::class, 'adminIndex']);
+    Route::put('/admin/orders/{order}', [OrderController::class, 'updateStatus']);
 });
 
 Route::middleware('auth')->group(function () {
