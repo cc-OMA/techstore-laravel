@@ -71,6 +71,17 @@
                         </div>
 
                         <div class="mb-3">
+                            <label class="form-label">Stock</label>
+
+                            <input
+                                type="number"
+                                name="stock"
+                                class="form-control"
+                                min="0"
+                                value="{{ old('stock', $product->stock) }}">
+                        </div>
+
+                        <div class="mb-3">
                             <label class="form-label">Current Image</label>
                             <br>
 
@@ -99,7 +110,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="/" class="btn btn-secondary">
+                            <a href="/admin/products" class="btn btn-secondary">
                                 Back
                             </a>
 

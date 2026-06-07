@@ -8,6 +8,12 @@
     <div class="py-5 bg-light">
         <div class="container">
 
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <h3 class="fw-bold mb-4">All Orders</h3>
 
             <a href="/dashboard" class="btn btn-secondary mb-4">
@@ -31,6 +37,7 @@
                                     <th>Total Price</th>
                                     <th>Status</th>
                                     <th>Order Date</th>
+                                    <th>Details</th>
                                     <th>Update Status</th>
                                 </tr>
                             </thead>
@@ -69,6 +76,14 @@
                                         </td>
 
                                         <td>
+                                            <a
+                                                href="/orders/{{ $order->id }}"
+                                                class="btn btn-info btn-sm">
+                                                View Details
+                                            </a>
+                                        </td>
+
+                                        <td>
                                             <form method="POST" action="/admin/orders/{{ $order->id }}">
                                                 @csrf
                                                 @method('PUT')
@@ -97,6 +112,7 @@
                                     </tr>
                                 @endforeach
                             </tbody>
+
                         </table>
 
                     </div>

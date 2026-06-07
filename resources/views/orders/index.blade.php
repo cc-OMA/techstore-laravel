@@ -22,21 +22,61 @@
                 <div class="card shadow-sm border-0">
                     <div class="card-body">
 
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-bordered table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Order ID</th>
                                     <th>Total Price</th>
+                                    <th>Status</th>
                                     <th>Order Date</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 @foreach($orders as $order)
                                     <tr>
-                                        <td>#{{ $order->id }}</td>
-                                        <td>${{ number_format($order->total_price, 2) }}</td>
-                                        <td>{{ $order->created_at->format('d M Y H:i') }}</td>
+
+                                        <td>
+                                            #{{ $order->id }}
+                                        </td>
+
+                                        <td>
+                                            ${{ number_format($order->total_price, 2) }}
+                                        </td>
+
+                                        <td>
+                                            @if($order->status == 'pending')
+                                                <span class="badge bg-warning text-dark">
+                                                    Pending
+                                                </span>
+                                            @elseif($order->status == 'completed')
+                                                <span class="badge bg-success">
+                                                    Completed
+                                                </span>
+                                            @elseif($order->status == 'cancelled')
+                                                <span class="badge bg-danger">
+                                                    Cancelled
+                                                </span>
+                                            @else
+                                                <span class="badge bg-secondary">
+                                                    {{ $order->status }}
+                                                </span>
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            {{ $order->created_at->format('d M Y H:i') }}
+                                        </td>
+
+                                        <td>
+                                            <a
+                                                href="/orders/{{ $order->id }}"
+                                                class="btn btn-primary btn-sm">
+                                                View Details
+                                            </a>
+                                        </td>
+
                                     </tr>
                                 @endforeach
                             </tbody>

@@ -202,6 +202,20 @@
                                 ${{ $product->price }}
                             </p>
 
+                            @if($product->stock > 0)
+                                <p class="mb-2">
+                                    <span class="badge bg-success">
+                                        In Stock: {{ $product->stock }}
+                                    </span>
+                                </p>
+                            @else
+                                <p class="mb-2">
+                                    <span class="badge bg-danger">
+                                        Out of Stock
+                                    </span>
+                                </p>
+                            @endif
+
                             <p class="card-text small flex-grow-1">
                                 {{ $product->description }}
                             </p>
@@ -218,13 +232,19 @@
                                 @endif
                             @endauth
 
-                            <form method="POST" action="/cart/add/{{ $product->id }}" class="mb-2">
-                                @csrf
+                            @if($product->stock > 0)
+                                <form method="POST" action="/cart/add/{{ $product->id }}" class="mb-2">
+                                    @csrf
 
-                                <button type="submit" class="btn btn-primary w-100">
-                                    Add to Cart
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        Add to Cart
+                                    </button>
+                                </form>
+                            @else
+                                <button class="btn btn-secondary w-100 mb-2" disabled>
+                                    Out of Stock
                                 </button>
-                            </form>
+                            @endif
 
                             @auth
                                 @if(auth()->user()->isAdmin())

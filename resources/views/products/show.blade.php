@@ -37,6 +37,20 @@
                         ${{ $product->price }}
                     </h3>
 
+                    @if($product->stock > 0)
+                        <p class="mb-4">
+                            <span class="badge bg-success fs-6">
+                                In Stock: {{ $product->stock }}
+                            </span>
+                        </p>
+                    @else
+                        <p class="mb-4">
+                            <span class="badge bg-danger fs-6">
+                                Out of Stock
+                            </span>
+                        </p>
+                    @endif
+
                     <p class="mb-4">
                         {{ $product->description }}
                     </p>
@@ -46,13 +60,19 @@
                         {{ $product->category->name ?? 'No Category' }}
                     </p>
 
-                    <form method="POST" action="/cart/add/{{ $product->id }}">
-                        @csrf
+                    @if($product->stock > 0)
+                        <form method="POST" action="/cart/add/{{ $product->id }}">
+                            @csrf
 
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            Add to Cart
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Add to Cart
+                            </button>
+                        </form>
+                    @else
+                        <button class="btn btn-secondary btn-lg" disabled>
+                            Out of Stock
                         </button>
-                    </form>
+                    @endif
 
                 </div>
             </div>

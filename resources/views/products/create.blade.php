@@ -72,6 +72,17 @@
                         </div>
 
                         <div class="mb-3">
+                            <label class="form-label">Stock</label>
+
+                            <input
+                                type="number"
+                                name="stock"
+                                class="form-control"
+                                placeholder="Enter stock quantity"
+                                min="0">
+                        </div>
+
+                        <div class="mb-3">
                             <label class="form-label">Product Image</label>
 
                             <input
@@ -92,7 +103,7 @@
 
                         <div class="d-flex justify-content-between">
 
-                            <a href="/" class="btn btn-secondary">
+                            <a href="/admin/products" class="btn btn-secondary">
                                 Back
                             </a>
 

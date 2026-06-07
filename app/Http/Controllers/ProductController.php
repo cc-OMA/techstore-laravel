@@ -32,6 +32,25 @@ class ProductController extends Controller
         return view('welcome', compact('products', 'cartCount', 'search'));
     }
 
+    public function adminProducts(Request $request)
+    {
+        $search = $request->search;
+
+        if ($search) {
+            $products = Product::with('category')
+                ->where('name', 'like', '%' . $search . '%')
+                ->orWhere('description', 'like', '%' . $search . '%')
+                ->latest()
+                ->get();
+        } else {
+            $products = Product::with('category')
+                ->latest()
+                ->get();
+        }
+
+        return view('products.admin', compact('products', 'search'));
+    }
+
     public function categoryProducts(Category $category)
     {
         $products = Product::where('category_id', $category->id)->get();
@@ -77,6 +96,7 @@ class ProductController extends Controller
             'category_id' => 'required',
             'name' => 'required',
             'price' => 'required|numeric',
+            'stock' => 'required|integer|min:0',
             'image' => 'required|image',
             'description' => 'required',
         ]);
@@ -87,11 +107,13 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'name' => $request->name,
             'price' => $request->price,
+            'stock' => $request->stock,
             'image' => $imagePath,
             'description' => $request->description,
         ]);
 
-        return redirect('/');
+        return redirect('/admin/products')
+            ->with('success', 'Product added successfully.');
     }
 
     public function show(Product $product)
@@ -118,6 +140,7 @@ class ProductController extends Controller
             'category_id' => 'required',
             'name' => 'required',
             'price' => 'required|numeric',
+            'stock' => 'required|integer|min:0',
             'image' => 'nullable|image',
             'description' => 'required',
         ]);
@@ -136,11 +159,13 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'name' => $request->name,
             'price' => $request->price,
+            'stock' => $request->stock,
             'image' => $imagePath,
             'description' => $request->description,
         ]);
 
-        return redirect('/');
+        return redirect('/admin/products')
+            ->with('success', 'Product updated successfully.');
     }
 
     public function addToCart(Product $product)
@@ -163,7 +188,8 @@ class ProductController extends Controller
             ]);
         }
 
-        return redirect('/');
+        return redirect('/')
+            ->with('success', 'Product added to cart.');
     }
 
     public function removeFromCart(Cart $cart)
@@ -178,7 +204,8 @@ class ProductController extends Controller
             $cart->delete();
         }
 
-        return redirect('/cart');
+        return redirect('/cart')
+            ->with('success', 'Cart updated successfully.');
     }
 
     public function destroy(Product $product)
@@ -189,6 +216,7 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return redirect('/');
+        return redirect('/admin/products')
+            ->with('success', 'Product deleted successfully.');
     }
 }
