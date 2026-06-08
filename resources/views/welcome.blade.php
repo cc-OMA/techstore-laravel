@@ -8,60 +8,187 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        .premium-navbar {
+            border-bottom: 1px solid rgba(13, 110, 253, 0.08);
+            backdrop-filter: blur(12px);
+        }
+
+        .brand-badge {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 900;
+            letter-spacing: -1px;
+            box-shadow: 0 10px 24px rgba(13, 110, 253, 0.25);
+        }
+
+        .brand-text {
+            line-height: 1.05;
+        }
+
+        .brand-subtitle {
+            font-size: 0.72rem;
+            color: #6c757d;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar .nav-link {
+            font-weight: 600;
+            color: #334155;
+            position: relative;
+        }
+
+        .navbar .nav-link:hover {
+            color: #0d6efd;
+        }
+
+        .navbar .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 0.5rem;
+            right: 0.5rem;
+            bottom: 3px;
+            height: 2px;
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+            border-radius: 999px;
+        }
+
+        .navbar .nav-link:hover::after,
+        .navbar .nav-link.active::after {
+            transform: scaleX(1);
+        }
+
+        .nav-search {
+            min-width: 260px;
+        }
+
+        .user-pill {
+            background: #f1f5f9;
+            color: #334155;
+            border-radius: 999px;
+            padding: 0.45rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .hero-box {
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            border-radius: 28px;
+        }
+
+        .category-card {
+            border: 0;
+            border-radius: 20px;
+        }
+
         .product-img {
-            height: 220px;
+            height: 230px;
             object-fit: cover;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
         }
 
         .product-card {
-            transition: 0.3s;
+            border: 0;
+            border-radius: 18px;
+            overflow: hidden;
         }
 
-        .product-card:hover {
-            transform: translateY(-5px);
+        .product-title {
+            min-height: 48px;
+            font-weight: 700;
+        }
+
+        .product-description {
+            min-height: 78px;
+            color: #6c757d;
+        }
+
+        .price-tag {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #0d6efd;
+        }
+
+        .section-title {
+            letter-spacing: -0.5px;
+        }
+
+        @media (max-width: 991px) {
+            .nav-search {
+                min-width: 100%;
+            }
+
+            .navbar-actions {
+                width: 100%;
+                justify-content: flex-start !important;
+                margin-top: 1rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-primary fs-3" href="/">TechStore</a>
+<nav class="navbar bg-white shadow-sm sticky-top premium-navbar">
+    <div class="container d-flex align-items-center flex-wrap gap-3">
+        <a class="navbar-brand d-flex align-items-center gap-2 me-3" href="/">
+            <span class="brand-badge">TS</span>
 
-        <div class="d-flex align-items-center ms-auto">
-            <form method="GET" action="/" class="d-flex me-3">
-                <input
-                    type="text"
-                    name="search"
-                    class="form-control"
-                    placeholder="Search products..."
-                    value="{{ $search ?? '' }}"
-                    style="width: 250px;">
+            <span class="brand-text">
+                <span class="d-block fw-bold text-primary fs-4">
+                    TechStore
+                </span>
 
-                <button type="submit" class="btn btn-outline-primary ms-2">
-                    Search
-                </button>
-            </form>
+                <span class="d-block brand-subtitle">
+                    Premium Electronics
+                </span>
+            </span>
+        </a>
 
-            <a class="nav-link active me-3" href="/">Home</a>
-            <a class="nav-link me-3" href="#products">Products</a>
-            <a class="nav-link me-3" href="#categories">Categories</a>
-            <a class="nav-link me-3" href="#">Contact</a>
+        <form method="GET" action="/" class="d-flex nav-search">
+            <input
+                type="text"
+                name="search"
+                class="form-control"
+                placeholder="Search products..."
+                value="{{ $search ?? '' }}">
+
+            <button type="submit" class="btn btn-outline-primary ms-2">
+                Search
+            </button>
+        </form>
+
+        <div class="d-flex align-items-center gap-2 flex-wrap ms-auto navbar-actions">
+            <a class="nav-link active px-2" href="/">Home</a>
+            <a class="nav-link px-2" href="#products">Products</a>
+            <a class="nav-link px-2" href="#categories">Categories</a>
+            <a class="nav-link px-2" href="#">Contact</a>
 
             @auth
+                <span class="user-pill">
+                    Hi, {{ auth()->user()->name }}
+                </span>
+
                 @if(auth()->user()->isAdmin())
-                    <a class="btn btn-success ms-3 me-2" href="/products/create">
+                    <a class="btn btn-success" href="/products/create">
                         Add Product
                     </a>
                 @endif
             @endauth
 
-            <a class="btn btn-outline-primary me-2" href="/cart">
+            <a class="btn btn-outline-primary" href="/cart">
                 Cart ({{ $cartCount }})
             </a>
 
             @auth
-                <a class="btn btn-outline-dark me-2" href="/dashboard">
+                <a class="btn btn-outline-dark" href="/dashboard">
                     Dashboard
                 </a>
 
@@ -81,29 +208,32 @@
     </div>
 </nav>
 
-<section class="py-5 bg-light">
+<section class="py-5">
     <div class="container">
         <div class="row align-items-center min-vh-50">
             <div class="col-md-6">
-                <p class="text-primary fw-bold">NEW ARRIVALS</p>
+                <p class="text-primary fw-bold mb-2">NEW ARRIVALS</p>
 
                 <h1 class="display-4 fw-bold">
                     Latest Electronics & Smart Devices
                 </h1>
 
-                <p class="lead">
+                <p class="lead text-muted">
                     Discover laptops, smartphones, headphones, gaming accessories and smart gadgets.
                 </p>
 
-                <a href="#products" class="btn btn-primary btn-lg">
+                <a href="#products" class="btn btn-primary btn-lg px-4">
                     Shop Now
                 </a>
             </div>
 
-            <div class="col-md-6 text-center">
-                <div class="bg-primary text-white rounded p-5 shadow">
+            <div class="col-md-6 text-center mt-4 mt-md-0">
+                <div class="hero-box text-white p-5 shadow">
                     <h2 class="display-5 fw-bold">SALE</h2>
                     <p class="fs-4 mb-0">Up to 50% Off</p>
+                    <p class="mt-3 mb-0 opacity-75">
+                        Premium tech deals are waiting for you.
+                    </p>
                 </div>
             </div>
         </div>
@@ -112,15 +242,15 @@
 
 <section class="py-5" id="categories">
     <div class="container">
-        <h2 class="text-center fw-bold mb-4">Categories</h2>
+        <h2 class="text-center fw-bold mb-4 section-title">Categories</h2>
 
         <div class="row g-4">
             <div class="col-md-3">
                 <a href="/category/1" class="text-decoration-none text-dark">
-                    <div class="card text-center shadow-sm h-100 product-card">
-                        <div class="card-body">
+                    <div class="card text-center shadow-sm h-100 category-card">
+                        <div class="card-body py-4">
                             <h5 class="card-title fw-bold">Laptops</h5>
-                            <p class="card-text">Premium laptops and notebooks</p>
+                            <p class="card-text text-muted mb-0">Premium laptops and notebooks</p>
                         </div>
                     </div>
                 </a>
@@ -128,10 +258,10 @@
 
             <div class="col-md-3">
                 <a href="/category/2" class="text-decoration-none text-dark">
-                    <div class="card text-center shadow-sm h-100 product-card">
-                        <div class="card-body">
+                    <div class="card text-center shadow-sm h-100 category-card">
+                        <div class="card-body py-4">
                             <h5 class="card-title fw-bold">Smartphones</h5>
-                            <p class="card-text">Latest mobile devices</p>
+                            <p class="card-text text-muted mb-0">Latest mobile devices</p>
                         </div>
                     </div>
                 </a>
@@ -139,10 +269,10 @@
 
             <div class="col-md-3">
                 <a href="/category/3" class="text-decoration-none text-dark">
-                    <div class="card text-center shadow-sm h-100 product-card">
-                        <div class="card-body">
+                    <div class="card text-center shadow-sm h-100 category-card">
+                        <div class="card-body py-4">
                             <h5 class="card-title fw-bold">Gaming</h5>
-                            <p class="card-text">Consoles and gaming gear</p>
+                            <p class="card-text text-muted mb-0">Consoles and gaming gear</p>
                         </div>
                     </div>
                 </a>
@@ -150,10 +280,10 @@
 
             <div class="col-md-3">
                 <a href="/category/4" class="text-decoration-none text-dark">
-                    <div class="card text-center shadow-sm h-100 product-card">
-                        <div class="card-body">
+                    <div class="card text-center shadow-sm h-100 category-card">
+                        <div class="card-body py-4">
                             <h5 class="card-title fw-bold">Accessories</h5>
-                            <p class="card-text">Headphones, keyboards and more</p>
+                            <p class="card-text text-muted mb-0">Headphones, keyboards and more</p>
                         </div>
                     </div>
                 </a>
@@ -162,10 +292,10 @@
     </div>
 </section>
 
-<section class="py-5 bg-light" id="products">
+<section class="py-5" id="products">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold mb-0">Featured Products</h2>
+            <h2 class="fw-bold mb-0 section-title">Featured Products</h2>
 
             <span class="badge bg-primary fs-6">
                 {{ $products->count() }} Products
@@ -189,8 +319,8 @@
                                 alt="{{ $product->name }}">
                         </a>
 
-                        <div class="card-body text-center d-flex flex-column">
-                            <h5 class="card-title">
+                        <div class="card-body d-flex flex-column p-4">
+                            <h5 class="card-title product-title">
                                 <a
                                     href="/products/{{ $product->id }}"
                                     class="text-decoration-none text-dark">
@@ -198,36 +328,34 @@
                                 </a>
                             </h5>
 
-                            <p class="text-primary fw-bold fs-5">
-                                ${{ $product->price }}
-                            </p>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="price-tag">
+                                    ${{ $product->price }}
+                                </span>
 
-                            @if($product->stock > 0)
-                                <p class="mb-2">
+                                @if($product->stock > 0)
                                     <span class="badge bg-success">
-                                        In Stock: {{ $product->stock }}
+                                        {{ $product->stock }} in stock
                                     </span>
-                                </p>
-                            @else
-                                <p class="mb-2">
+                                @else
                                     <span class="badge bg-danger">
                                         Out of Stock
                                     </span>
-                                </p>
-                            @endif
+                                @endif
+                            </div>
 
-                            <p class="card-text small flex-grow-1">
-                                {{ $product->description }}
+                            <p class="card-text small product-description flex-grow-1">
+                                {{ Str::limit($product->description, 115) }}
                             </p>
 
-                            <a href="/products/{{ $product->id }}" class="btn btn-outline-primary mb-2">
+                            <a href="/products/{{ $product->id }}" class="btn btn-outline-primary w-100 mb-2">
                                 View Details
                             </a>
 
                             @auth
                                 @if(auth()->user()->isAdmin())
-                                    <a href="/products/{{ $product->id }}/edit" class="btn btn-warning mb-2">
-                                        Edit
+                                    <a href="/products/{{ $product->id }}/edit" class="btn btn-warning w-100 mb-2">
+                                        Edit Product
                                     </a>
                                 @endif
                             @endauth
@@ -252,8 +380,8 @@
                                         @csrf
                                         @method('DELETE')
 
-                                        <button type="submit" class="btn btn-danger w-100">
-                                            Delete
+                                        <button type="submit" class="btn btn-outline-danger w-100">
+                                            Delete Product
                                         </button>
                                     </form>
                                 @endif

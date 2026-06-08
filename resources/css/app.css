@@ -3,3 +3,52 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%);
+    color: #1f2937;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+.card {
+    border-radius: 18px;
+    transition: all 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12) !important;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.table {
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.alert {
+    border-radius: 14px;
+    border: none;
+}
+
+.badge {
+    padding: 0.55em 0.75em;
+    border-radius: 999px;
+}
+
+.product-img {
+    transition: transform 0.3s ease;
+}
+
+.card:hover .product-img {
+    transform: scale(1.04);
+}
