@@ -121,6 +121,39 @@
             letter-spacing: -0.5px;
         }
 
+        .premium-footer {
+            background: #0f172a;
+            color: #ffffff;
+            position: relative;
+        }
+
+        .premium-footer::before {
+            content: "";
+            display: block;
+            height: 4px;
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+        }
+
+        .footer-brand-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+        }
+
+        .footer-link {
+            color: #cbd5e1;
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            color: #ffffff;
+        }
+
         @media (max-width: 991px) {
             .nav-search {
                 min-width: 100%;
@@ -295,7 +328,15 @@
 <section class="py-5" id="products">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold mb-0 section-title">Featured Products</h2>
+            <h2 class="fw-bold mb-0 section-title">
+                @if(isset($selectedCategory))
+                    {{ $selectedCategory->name }} Products
+                @elseif(!empty($search))
+                    Search Results
+                @else
+                    Featured Products
+                @endif
+            </h2>
 
             <span class="badge bg-primary fs-6">
                 {{ $products->count() }} Products
@@ -305,6 +346,12 @@
         @if(!empty($search))
             <div class="alert alert-info">
                 Search results for: <strong>{{ $search }}</strong>
+            </div>
+        @endif
+
+        @if(isset($selectedCategory))
+            <div class="alert alert-primary">
+                Showing products in category: <strong>{{ $selectedCategory->name }}</strong>
             </div>
         @endif
 
@@ -395,13 +442,58 @@
     </div>
 </section>
 
-<footer class="bg-dark text-white text-center py-4">
-    <div class="container">
-        <h5 class="fw-bold">TechStore</h5>
-        <p class="mb-1">
-            Your trusted electronics store for smart devices and accessories.
-        </p>
-        <p class="mb-0">© 2026 TechStore. All rights reserved.</p>
+<footer class="premium-footer mt-5">
+    <div class="container py-5">
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="footer-brand-badge">TS</span>
+
+                    <div>
+                        <h5 class="fw-bold mb-0">TechStore</h5>
+                        <small class="text-secondary">Premium Electronics</small>
+                    </div>
+                </div>
+
+                <p class="text-secondary mb-0">
+                    Your trusted electronics store for smartphones, laptops,
+                    gaming devices and premium accessories.
+                </p>
+            </div>
+
+            <div class="col-md-4">
+                <h6 class="fw-bold mb-3">Quick Links</h6>
+
+                <div class="d-flex flex-column gap-2">
+                    <a href="/" class="footer-link">Home</a>
+                    <a href="#products" class="footer-link">Products</a>
+                    <a href="#categories" class="footer-link">Categories</a>
+                    <a href="/cart" class="footer-link">Cart</a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <h6 class="fw-bold mb-3">Contact Info</h6>
+
+                <p class="text-secondary mb-2">📍 Istanbul, Türkiye</p>
+                <p class="text-secondary mb-2">📧 support@techstore.com</p>
+                <p class="text-secondary mb-0">🛒 Secure online shopping</p>
+            </div>
+
+        </div>
+
+        <hr class="border-secondary my-4">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <p class="text-secondary mb-0">
+                © 2026 TechStore. All rights reserved.
+            </p>
+
+            <p class="text-secondary mb-0">
+                Built with Laravel
+            </p>
+        </div>
     </div>
 </footer>
 

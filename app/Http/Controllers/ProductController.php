@@ -62,8 +62,9 @@ class ProductController extends Controller
         }
 
         $search = null;
+        $selectedCategory = $category;
 
-        return view('welcome', compact('products', 'cartCount', 'search'));
+        return view('welcome', compact('products', 'cartCount', 'search', 'selectedCategory'));
     }
 
     public function cart()
