@@ -90,6 +90,7 @@
                         <table class="table table-bordered table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
+                                    <th>Image</th>
                                     <th>Product</th>
                                     <th>Quantity</th>
                                     <th>Price</th>
@@ -100,6 +101,20 @@
                             <tbody>
                                 @foreach($order->items as $item)
                                     <tr>
+                                        <td>
+                                            @if($item->product && $item->product->image)
+                                                <img
+                                                    src="{{ str_starts_with($item->product->image, 'http') ? $item->product->image : asset('storage/' . $item->product->image) }}"
+                                                    alt="{{ $item->product->name }}"
+                                                    style="width: 70px; height: 70px; object-fit: cover;"
+                                                    class="rounded">
+                                            @else
+                                                <span class="text-muted">
+                                                    No Image
+                                                </span>
+                                            @endif
+                                        </td>
+
                                         <td>
                                             {{ $item->product->name ?? 'Deleted Product' }}
                                         </td>
