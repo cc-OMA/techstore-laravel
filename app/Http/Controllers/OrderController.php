@@ -41,8 +41,36 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, Order $order)
     {
+        $oldStatus = $order->status;
+        $newStatus = $request->status;
+
+        $order->load('items.product');
+
+        if ($oldStatus !== 'cancelled' && $newStatus === 'cancelled') {
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $item->product->increment('stock', $item->quantity);
+                }
+            }
+        }
+
+        if ($oldStatus === 'cancelled' && $newStatus !== 'cancelled') {
+            foreach ($order->items as $item) {
+                if ($item->product && $item->product->stock < $item->quantity) {
+                    return redirect('/admin/orders')
+                        ->with('success', 'Order status could not be updated because there is not enough stock.');
+                }
+            }
+
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $item->product->decrement('stock', $item->quantity);
+                }
+            }
+        }
+
         $order->update([
-            'status' => $request->status,
+            'status' => $newStatus,
         ]);
 
         return redirect('/admin/orders')

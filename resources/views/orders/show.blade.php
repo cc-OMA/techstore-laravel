@@ -81,8 +81,8 @@
 
                     @if($order->items->count() == 0)
 
-                        <div class="alert alert-info">
-                            No products found for this order.
+                        <div class="alert alert-warning">
+                            Product details are not available for this order because it was created before order item tracking was added.
                         </div>
 
                     @else
