@@ -121,6 +121,36 @@
             letter-spacing: -0.5px;
         }
 
+        .filter-card {
+            border: 0;
+            border-radius: 20px;
+            background: #ffffff;
+        }
+
+        .contact-card {
+            border: 0;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .contact-info-box {
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            color: #ffffff;
+            border-radius: 24px;
+            height: 100%;
+        }
+
+        .contact-icon-box {
+            width: 46px;
+            height: 46px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.16);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+        }
+
         .premium-footer {
             background: #0f172a;
             color: #ffffff;
@@ -202,7 +232,7 @@
             <a class="nav-link active px-2" href="/">Home</a>
             <a class="nav-link px-2" href="#products">Products</a>
             <a class="nav-link px-2" href="#categories">Categories</a>
-            <a class="nav-link px-2" href="#">Contact</a>
+            <a class="nav-link px-2" href="#contact">Contact</a>
 
             @auth
                 <span class="user-pill">
@@ -327,7 +357,7 @@
 
 <section class="py-5" id="products">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <h2 class="fw-bold mb-0 section-title">
                 @if(isset($selectedCategory))
                     {{ $selectedCategory->name }} Products
@@ -339,8 +369,46 @@
             </h2>
 
             <span class="badge bg-primary fs-6">
-                {{ $products->count() }} Products
+                {{ method_exists($products, 'total') ? $products->total() : $products->count() }} Products
             </span>
+        </div>
+
+        <div class="card shadow-sm filter-card mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ isset($selectedCategory) ? '/category/' . $selectedCategory->id : '/' }}" class="row g-3 align-items-end">
+                    @if(!empty($search))
+                        <input type="hidden" name="search" value="{{ $search }}">
+                    @endif
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Sort Products</label>
+
+                        <select name="sort" class="form-select">
+                            <option value="newest" {{ ($sort ?? 'newest') == 'newest' ? 'selected' : '' }}>
+                                Newest
+                            </option>
+
+                            <option value="price_low_high" {{ ($sort ?? '') == 'price_low_high' ? 'selected' : '' }}>
+                                Price: Low to High
+                            </option>
+
+                            <option value="price_high_low" {{ ($sort ?? '') == 'price_high_low' ? 'selected' : '' }}>
+                                Price: High to Low
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-8 d-flex gap-2 flex-wrap">
+                        <button type="submit" class="btn btn-primary">
+                            Apply Sort
+                        </button>
+
+                        <a href="{{ isset($selectedCategory) ? '/category/' . $selectedCategory->id : '/' }}" class="btn btn-outline-secondary">
+                            Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
 
         @if(!empty($search))
@@ -439,6 +507,111 @@
             @endforeach
         </div>
 
+        @if(method_exists($products, 'links'))
+            <div class="mt-5 d-flex justify-content-center">
+                {{ $products->links() }}
+            </div>
+        @endif
+
+    </div>
+</section>
+
+<section class="py-5 bg-light" id="contact">
+    <div class="container">
+        <div class="text-center mb-5">
+            <p class="text-primary fw-bold mb-2">CONTACT US</p>
+
+            <h2 class="fw-bold section-title">
+                Get in Touch
+            </h2>
+
+            <p class="text-muted mb-0">
+                Have a question about products, orders or support? Reach out to TechStore.
+            </p>
+        </div>
+
+        <div class="row g-4 align-items-stretch">
+            <div class="col-md-5">
+                <div class="contact-info-box shadow-sm p-4 p-md-5">
+                    <h3 class="fw-bold mb-4">
+                        Contact Information
+                    </h3>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <span class="contact-icon-box">📍</span>
+
+                        <div>
+                            <h6 class="fw-bold mb-1">Location</h6>
+                            <p class="mb-0 opacity-75">Istanbul, Türkiye</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <span class="contact-icon-box">📧</span>
+
+                        <div>
+                            <h6 class="fw-bold mb-1">Email</h6>
+                            <p class="mb-0 opacity-75">support@techstore.com</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <span class="contact-icon-box">🛒</span>
+
+                        <div>
+                            <h6 class="fw-bold mb-1">Support</h6>
+                            <p class="mb-0 opacity-75">Secure online shopping support</p>
+                        </div>
+                    </div>
+
+                    <p class="mb-0 opacity-75">
+                        Our team is ready to help with product questions, order tracking and store support.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="card shadow-sm contact-card h-100">
+                    <div class="card-body p-4 p-md-5">
+                        <h3 class="fw-bold mb-3">
+                            Send a Message
+                        </h3>
+
+                        <p class="text-muted mb-4">
+                            This contact form is currently for design/demo purposes.
+                        </p>
+
+                        <form>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Name</label>
+                                    <input type="text" class="form-control" placeholder="Your name">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Email</label>
+                                    <input type="email" class="form-control" placeholder="your@email.com">
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold">Subject</label>
+                                    <input type="text" class="form-control" placeholder="Message subject">
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold">Message</label>
+                                    <textarea class="form-control" rows="5" placeholder="Write your message..."></textarea>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-lg mt-4">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -470,6 +643,7 @@
                     <a href="#products" class="footer-link">Products</a>
                     <a href="#categories" class="footer-link">Categories</a>
                     <a href="/cart" class="footer-link">Cart</a>
+                    <a href="#contact" class="footer-link">Contact</a>
                 </div>
             </div>
 

@@ -14,14 +14,28 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $search = $request->search;
+        $sort = $request->sort;
+
+        $products = Product::query();
 
         if ($search) {
-            $products = Product::where('name', 'like', '%' . $search . '%')
-                ->orWhere('description', 'like', '%' . $search . '%')
-                ->get();
-        } else {
-            $products = Product::all();
+            $products->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+            });
         }
+
+        if ($sort == 'price_low_high') {
+            $products->orderBy('price', 'asc');
+        } elseif ($sort == 'price_high_low') {
+            $products->orderBy('price', 'desc');
+        } elseif ($sort == 'newest') {
+            $products->latest();
+        } else {
+            $products->latest();
+        }
+
+        $products = $products->paginate(8)->withQueryString();
 
         if (Auth::check()) {
             $cartCount = Cart::where('user_id', Auth::id())->sum('quantity');
@@ -29,31 +43,44 @@ class ProductController extends Controller
             $cartCount = 0;
         }
 
-        return view('welcome', compact('products', 'cartCount', 'search'));
+        return view('welcome', compact('products', 'cartCount', 'search', 'sort'));
     }
 
     public function adminProducts(Request $request)
     {
         $search = $request->search;
 
+        $products = Product::with('category');
+
         if ($search) {
-            $products = Product::with('category')
-                ->where('name', 'like', '%' . $search . '%')
-                ->orWhere('description', 'like', '%' . $search . '%')
-                ->latest()
-                ->get();
-        } else {
-            $products = Product::with('category')
-                ->latest()
-                ->get();
+            $products->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+            });
         }
+
+        $products = $products->latest()->get();
 
         return view('products.admin', compact('products', 'search'));
     }
 
-    public function categoryProducts(Category $category)
+    public function categoryProducts(Request $request, Category $category)
     {
-        $products = Product::where('category_id', $category->id)->get();
+        $sort = $request->sort;
+
+        $products = Product::where('category_id', $category->id);
+
+        if ($sort == 'price_low_high') {
+            $products->orderBy('price', 'asc');
+        } elseif ($sort == 'price_high_low') {
+            $products->orderBy('price', 'desc');
+        } elseif ($sort == 'newest') {
+            $products->latest();
+        } else {
+            $products->latest();
+        }
+
+        $products = $products->paginate(8)->withQueryString();
 
         if (Auth::check()) {
             $cartCount = Cart::where('user_id', Auth::id())->sum('quantity');
@@ -64,7 +91,7 @@ class ProductController extends Controller
         $search = null;
         $selectedCategory = $category;
 
-        return view('welcome', compact('products', 'cartCount', 'search', 'selectedCategory'));
+        return view('welcome', compact('products', 'cartCount', 'search', 'selectedCategory', 'sort'));
     }
 
     public function cart()
