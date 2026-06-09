@@ -68,6 +68,27 @@
             gap: 0.75rem;
         }
 
+        .review-card {
+            border: 0;
+            border-radius: 24px;
+        }
+
+        .review-item {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 1rem;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 1.2rem;
+        }
+
+        .review-form-card {
+            border: 0;
+            border-radius: 24px;
+        }
+
         @media (max-width: 767px) {
             .detail-image {
                 height: 360px;
@@ -83,6 +104,22 @@
 
 <div class="product-detail-wrapper py-5">
     <div class="container">
+
+        @if(session('success'))
+            <div class="alert alert-success shadow-sm">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger shadow-sm">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <a href="/" class="btn btn-outline-secondary">
@@ -114,6 +151,26 @@
                         <h1 class="fw-bold mb-3">
                             {{ $product->name }}
                         </h1>
+
+                        <div class="mb-3">
+                            <span class="rating-stars">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($averageRating && $i <= round($averageRating))
+                                        ★
+                                    @else
+                                        ☆
+                                    @endif
+                                @endfor
+                            </span>
+
+                            <span class="text-muted ms-2">
+                                @if($reviewCount > 0)
+                                    {{ number_format($averageRating, 1) }} / 5 based on {{ $reviewCount }} reviews
+                                @else
+                                    No reviews yet
+                                @endif
+                            </span>
+                        </div>
 
                         <div class="price-display mb-4">
                             ${{ number_format($product->price, 2) }}
@@ -184,6 +241,116 @@
                 </div>
 
             </div>
+        </div>
+
+        <div class="row g-4 mt-4">
+
+            <div class="col-md-5">
+                <div class="card shadow-sm review-form-card h-100">
+                    <div class="card-body p-4">
+                        <h3 class="fw-bold mb-3">
+                            Write a Review ⭐
+                        </h3>
+
+                        @auth
+                            <form method="POST" action="/products/{{ $product->id }}/reviews">
+                                @csrf
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        Rating
+                                    </label>
+
+                                    <select name="rating" class="form-select" required>
+                                        <option value="">Select rating</option>
+                                        <option value="5">5 Stars - Excellent</option>
+                                        <option value="4">4 Stars - Very Good</option>
+                                        <option value="3">3 Stars - Good</option>
+                                        <option value="2">2 Stars - Fair</option>
+                                        <option value="1">1 Star - Poor</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        Comment
+                                    </label>
+
+                                    <textarea
+                                        name="comment"
+                                        class="form-control"
+                                        rows="5"
+                                        placeholder="Share your thoughts about this product..."
+                                        required></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    Submit Review
+                                </button>
+                            </form>
+                        @else
+                            <div class="alert alert-info mb-0">
+                                Please <a href="/login">login</a> to write a review.
+                            </div>
+                        @endauth
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="card shadow-sm review-card h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="fw-bold mb-0">
+                                Customer Reviews
+                            </h3>
+
+                            <span class="badge bg-primary fs-6">
+                                {{ $reviewCount }} Reviews
+                            </span>
+                        </div>
+
+                        @if($product->reviews->count() == 0)
+                            <div class="alert alert-info mb-0">
+                                No reviews yet. Be the first to review this product.
+                            </div>
+                        @else
+                            <div class="d-flex flex-column gap-3">
+                                @foreach($product->reviews->sortByDesc('created_at') as $review)
+                                    <div class="review-item">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <h6 class="fw-bold mb-1">
+                                                    {{ $review->user->name ?? 'Unknown User' }}
+                                                </h6>
+
+                                                <small class="text-muted">
+                                                    {{ $review->created_at->format('d M Y H:i') }}
+                                                </small>
+                                            </div>
+
+                                            <span class="rating-stars">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    @if($i <= $review->rating)
+                                                        ★
+                                                    @else
+                                                        ☆
+                                                    @endif
+                                                @endfor
+                                            </span>
+                                        </div>
+
+                                        <p class="mb-0 text-muted">
+                                            {{ $review->comment }}
+                                        </p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>

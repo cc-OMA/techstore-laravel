@@ -146,13 +146,23 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        $product->load(['category', 'reviews.user']);
+
         if (Auth::check()) {
             $cartCount = Cart::where('user_id', Auth::id())->sum('quantity');
         } else {
             $cartCount = 0;
         }
 
-        return view('products.show', compact('product', 'cartCount'));
+        $averageRating = $product->reviews->avg('rating');
+        $reviewCount = $product->reviews->count();
+
+        return view('products.show', compact(
+            'product',
+            'cartCount',
+            'averageRating',
+            'reviewCount'
+        ));
     }
 
     public function edit(Product $product)

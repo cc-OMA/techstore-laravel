@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Cart;
@@ -32,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/order/place', [OrderController::class, 'placeOrder']);
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/{order}', [OrderController::class, 'show']);
+
+    Route::post('/products/{product}/reviews', [ReviewController::class, 'store']);
 });
 
 Route::get('/products/{product}', [ProductController::class, 'show']);
